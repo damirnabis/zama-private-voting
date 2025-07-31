@@ -16,13 +16,22 @@ This project is the frontend for a decentralized voting platform built with [Zam
 
 ## Installation
 ```bash
-git clone https://github.com/your-repo/zama-private-voting-frontend.git
-cd zama-private-voting-frontend
+cd frontend
 npm install
 ```
 
 ---
 
+## Configuration
+The fheConfig.ts file contains the setup:
+
+```bash
+export const FACTORY_ADDRESS = "0x..."; // Factory contract address
+export const FACTORY_ABI = [...];       // ABI for the factory
+export const VOTING_ABI = [...];        // ABI for voting contracts
+```
+
+---
 ## Local Development
 npm run dev
 
@@ -44,17 +53,6 @@ ethers.js v6
 Tailwind CSS / custom CSS
 
 MetaMask
-
----
-
-## Configuration
-The fheConfig.ts file contains the setup:
-
-```bash
-export const FACTORY_ADDRESS = "0x..."; // Factory contract address
-export const FACTORY_ABI = [...];       // ABI for the factory
-export const VOTING_ABI = [...];        // ABI for voting contracts
-```
 
 ---
 
