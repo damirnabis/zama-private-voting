@@ -30,15 +30,11 @@ describe("PrivateVoting", function () {
     const voting = await VotingFactory.deploy("Vote YES or NO", durationSeconds, deployer);
     const votingAddress = await voting.getAddress();
 
-    // Голосует Alice (1 — YES)
-    console.log("votingAddress:", votingAddress);
-    console.log("alice:", alice.address);
     const input = fhevm.createEncryptedInput(votingAddress, alice.address);
     input.add32(1);
     const encrypted = await input.encrypt();
     await voting.connect(alice).vote(encrypted.handles[0], encrypted.inputProof);
 
-    // Создатель расшифровывает зашифрованные результаты
     const [encNoBefore, encYesBefore] = await voting.connect(deployer).getEncryptedResults();
     const privNo = await fhevm.userDecryptEuint(FhevmType.euint32, encNoBefore, votingAddress, deployer);
     const privYes = await fhevm.userDecryptEuint(FhevmType.euint32, encYesBefore, votingAddress, deployer);
@@ -46,19 +42,16 @@ describe("PrivateVoting", function () {
     expect(privNo).to.equal(0);
     expect(privYes).to.equal(1);
 
-    // Время голосования истекает
     await ethers.provider.send("evm_increaseTime", [durationSeconds + 1]);
     await ethers.provider.send("evm_mine");
 
-    // Раскрываем результаты
     await voting.connect(deployer).makeResultsPublic();
 
-    // Любой пользователь может расшифровать
     const [encNoAfter, encYesAfter] = await voting.getPublicResults();
     const pubNo = await fhevm.userDecryptEuint(FhevmType.euint32, encNoAfter, votingAddress, alice);
     const pubYes = await fhevm.userDecryptEuint(FhevmType.euint32, encYesAfter, votingAddress, alice);
 
-    //expect(pubNo).to.equal(0);
-    //expect(pubYes).to.equal(1);
+    expect(pubNo).to.equal(0);
+    expect(pubYes).to.equal(1);
   });
 });

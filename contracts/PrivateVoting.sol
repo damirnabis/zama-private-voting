@@ -26,24 +26,17 @@ contract PrivateVoting is SepoliaConfig {
     }
 
     function vote(externalEuint32 encryptedVote, bytes calldata attestation) external {
-        emit Debug("start vote");
         require(block.timestamp < deadline, "Voting has ended");
-        emit Debug("after deadline check");
         require(!hasVoted[msg.sender], "Already voted");
-        emit Debug("after hasVoted check");
 
         euint32 voteValue = FHE.fromExternal(encryptedVote, attestation);
-        emit Debug("after fromExternal");
         FHE.allow(voteValue, address(this));
-        emit Debug("after allow");
 
         votes1 = FHE.add(votes1, voteValue);
 
         euint32 one = FHE.asEuint32(1);
         euint32 inverted = FHE.sub(one, voteValue);
         votes0 = FHE.add(votes0, inverted);
-
-        emit Debug("votes updated");
 
         FHE.allowThis(votes0);
         FHE.allowThis(votes1);
@@ -53,7 +46,6 @@ contract PrivateVoting is SepoliaConfig {
         FHE.allow(votes1, msg.sender);
 
         hasVoted[msg.sender] = true;
-        emit Debug("vote end");
     }
 
     function makeResultsPublic() external {
