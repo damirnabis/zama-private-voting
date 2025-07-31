@@ -1,17 +1,21 @@
-import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeployFunction } from "hardhat-deploy/types";
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployer } = await hre.getNamedAccounts();
-  const { deploy } = hre.deployments;
+const deployVotingFactory: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  const { deployments, getNamedAccounts } = hre;
+  const { deploy } = deployments;
 
-  const deployedFHECounter = await deploy("FHECounter", {
+  const { deployer } = await getNamedAccounts();
+
+  const result = await deploy("VotingFactory", {
     from: deployer,
+    //args: ["Test Vote", 3600, deployer],
     log: true,
   });
 
-  console.log(`FHECounter contract: `, deployedFHECounter.address);
+  console.log("✅ VotingFactory deployed to:", result.address);
 };
-export default func;
-func.id = "deploy_fheCounter"; // id required to prevent reexecution
-func.tags = ["FHECounter"];
+
+export default deployVotingFactory;
+
+deployVotingFactory.tags = ["VotingFactory"];
