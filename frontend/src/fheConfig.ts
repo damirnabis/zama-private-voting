@@ -1,4 +1,4 @@
-export const FACTORY_ADDRESS = "";
+export const FACTORY_ADDRESS = "YOUR_FACTORY_CONTRACT_ADDRESS_HERE";
 
 export const VOTING_ABI = [
     {

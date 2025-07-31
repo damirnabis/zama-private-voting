@@ -1,69 +1,86 @@
-# React + TypeScript + Vite
+# FHE Private Voting Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is the frontend for a decentralized voting platform built with [Zama FHEVM](https://docs.zama.ai/), using encrypted votes. Users can create polls and vote **privately**, without revealing their input until after the deadline.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- Zama FHE support via Relayer SDK
+- Private voting with user-side decryption
+- Create polls with configurable duration
+- Automatically displays results after the deadline
+- MetaMask / EVM wallet support
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Installation
+```bash
+git clone https://github.com/your-repo/zama-private-voting-frontend.git
+cd zama-private-voting-frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Local Development
+npm run dev
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+The app will run at http://localhost:5173
+
+## Visual demonstration
+![alt text](image.png)
+
+
+---
+
+## Technologies Used
+React + TypeScript
+
+@zama-fhe/relayer-sdk
+
+ethers.js v6
+
+Tailwind CSS / custom CSS
+
+MetaMask
+
+---
+
+## Configuration
+The fheConfig.ts file contains the setup:
+
+```bash
+export const FACTORY_ADDRESS = "0x..."; // Factory contract address
+export const FACTORY_ABI = [...];       // ABI for the factory
+export const VOTING_ABI = [...];        // ABI for voting contracts
 ```
+
+---
+
+## Project Structure
+```bash
+.
+├── src/
+│   ├── App.tsx            # Main component
+│   ├── fheConfig.ts       # Contract config and ABIs
+│   ├── styles/            # Styling
+│   └── ...
+├── public/
+├── index.html
+└── vite.config.ts
+```
+
+---
+
+## Security & Privacy
+All votes are encrypted on the client using the FHE SDK
+
+Only the vote owner can decrypt their choice (via EIP-712 signature)
+
+Results can be made publicly decryptable after the deadline
+
+---
+
+## License
+MIT © 2025
