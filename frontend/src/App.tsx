@@ -31,6 +31,7 @@ function App() {
   const [newDuration, setNewDuration] = useState<number>(0);
   const [newTimeUnit, setNewTimeUnit] = useState<"seconds" | "minutes" | "hours" | "days">("seconds");
   const [hideFinished, setHideFinished] = useState(false);
+  const [creationStatus, setCreationStatus] = useState<"idle" | "pending" | "success" | "error">("idle");
 
   useEffect(() => {
     if (!account) return;
@@ -79,12 +80,19 @@ function App() {
   const createVoting = async () => {
     if (!factoryContract || !instance || !provider) return;
     const durationSec = convertToSeconds();
-    const tx = await factoryContract.createVoting(newDesc, durationSec);
-    await tx.wait();
-    setShowCreateModal(false);
-    setNewDesc("");
-    setNewDuration(0);
-    await loadVotings();
+    setCreationStatus("pending");
+    try {
+      const tx = await factoryContract.createVoting(newDesc, durationSec);
+      await tx.wait();
+      setCreationStatus("success");
+      setShowCreateModal(false);
+      setNewDesc("");
+      setNewDuration(0);
+      await loadVotings();
+    } catch (e) {
+      console.error("Voting creation failed:", e);
+      setCreationStatus("error");
+    }
   };
 
   const loadVotings = async () => {
@@ -128,13 +136,20 @@ function App() {
 
   const submitVote = async (voteContract: ethers.Contract, option: 0 | 1) => {
     if (!instance || !provider || !account) return;
-    const voteContractAddress = await voteContract.getAddress()
+    const voteContractAddress = await voteContract.getAddress();
     const input = await instance.createEncryptedInput(voteContractAddress, account);
     input.add32(option);
     const { handles, inputProof } = await input.encrypt();
     const hexHandle = ethers.hexlify(handles[0]);
     const hexProof = ethers.hexlify(inputProof);
-    const tx = await voteContract.vote(hexHandle, hexProof)
+    const tx = await voteContract.vote(
+      hexHandle,
+      hexProof,
+      {
+        gasLimit: 1000000,
+        maxFeePerGas: ethers.parseUnits("30", "gwei"),
+        maxPriorityFeePerGas: ethers.parseUnits("5", "gwei")
+      });
     await tx.wait();
     await loadVotings();
   };
@@ -169,7 +184,7 @@ function App() {
             <h2>📋 My Votes</h2>
             <div className="section-header">
               <div className="left-controls">
-                <button className="btn darkgreen" onClick={() => setShowCreateModal(true)}>
+                <button className="btn darkgreen" onClick={() => { setCreationStatus("idle"); setShowCreateModal(true); }}>
                   ➕ Create Voting
                 </button>
               </div>
@@ -231,8 +246,11 @@ function App() {
               rows={3}
               value={newDesc}
               onChange={e => setNewDesc(e.target.value)}
-              placeholder="Description"
+              placeholder="Voting description"
             />
+            <label style={{ display: "block", marginTop: "1rem", marginBottom: "0.25rem", fontSize: "0.9rem" }}>
+              Select time duration and unit:
+            </label>
             <div className="time-inputs">
               <input
                 type="number"
@@ -250,8 +268,13 @@ function App() {
                 <option value="days">Days</option>
               </select>
             </div>
-            <button className="btn darkgreen" onClick={createVoting}>Create</button>
-            <button className="btn small" onClick={() => setShowCreateModal(false)}>Cancel</button>
+            {creationStatus === "pending" && <p className="status pending">⏳ Waiting for transaction...</p>}
+            {creationStatus === "success" && <p className="status success">✅ Successfully created!</p>}
+            {creationStatus === "error" && <p className="status error">❌ Transaction rejected.</p>}
+            <div className="button-row">
+              <button className="btn smaller" onClick={createVoting}>➕ Create</button>
+              <button className="btn smaller" onClick={() => setShowCreateModal(false)}>❌ Cancel</button>
+            </div>
           </div>
         </div>
       )}

@@ -85,19 +85,75 @@ body, html, #root {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 1000;
 }
 
 .modal-content {
-  background-color: #1a1a1a;
+  background: #1e1e1e;
+  color: white;
   padding: 2rem;
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-  z-index: 10000;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: center;
+  text-align: center;
+}
+
+.modal-content textarea,
+.modal-content input,
+.modal-content select {
+  width: 100%;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  background-color: #333;
+  color: white;
+}
+
+.modal-content .time-inputs {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-content .button-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+.modal-content .btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #2e8b57;
+  color: white;
+  transition: background-color 0.2s ease;
+}
+
+.modal-content .btn.small {
+  background-color: #444;
+}
+
+.modal-content .btn:hover {
+  background-color: #3cb371;
+}
+
+.modal-content .btn.smaller {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
 }
