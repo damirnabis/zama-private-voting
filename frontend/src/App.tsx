@@ -131,9 +131,6 @@ function App() {
     const voteContractAddress = await voteContract.getAddress()
     const input = await instance.createEncryptedInput(voteContractAddress, account);
     input.add32(option);
-    const now = Math.floor(Date.now() / 1000);
-    const deadline = await voteContract.deadline();
-    const already = await voteContract.hasVoted(account);
     const { handles, inputProof } = await input.encrypt();
     const hexHandle = ethers.hexlify(handles[0]);
     const hexProof = ethers.hexlify(inputProof);
